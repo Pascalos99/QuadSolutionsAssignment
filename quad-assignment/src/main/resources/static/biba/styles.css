@@ -1,0 +1,40 @@
+:root {
+  --bg-dark: rgb(64, 64, 104);
+  --gold: rgb(255, 207, 31);
+  --orange: rgb(238, 156, 33);
+  --link: rgb(153, 212, 57);
+  --link-visited: rgb(125, 178, 41);
+  --link-active: rgb(57, 212, 147);
+  --highlight: rgb(255, 255, 30);
+}
+
+body {
+  background: var(--bg-dark);
+  color: var(--gold);
+  padding: 5px 10px 15px 10px;
+}
+
+h1 {
+  color: var(--orange);
+}
+
+a:link {
+  color: var(--link);
+}
+
+a:visited {
+  color: var(--link-visited);
+}
+
+a:active {
+  color: var(--link-active);
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+span {
+  color: var(--highlight);
+  font-weight: bold;
+}
