@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.github.pascalos99</groupId>
 	<artifactId>quad-assignment-backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name/>
 	<description/>
 	<url/>
@@ -115,6 +115,8 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+
+		<finalName>QuadAssignment</finalName>
 	</build>
 
 </project>
