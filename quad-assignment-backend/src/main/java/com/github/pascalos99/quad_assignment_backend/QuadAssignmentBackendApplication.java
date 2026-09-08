@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
-public class QuadAssignmentApplication {
+public class QuadAssignmentBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(QuadAssignmentApplication.class, args);
+		SpringApplication.run(QuadAssignmentBackendApplication.class, args);
 	}
 
 	@GetMapping("/hello")
