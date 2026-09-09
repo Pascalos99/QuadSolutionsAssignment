@@ -2,7 +2,7 @@
 
 ## How to build
 
-This project consists of a Java Spring Boot back-end with a Vue.js front-end. The back-end **requires a Java JDK (v21 or higher)** to be accessible from the `backend` directory. Building the back-end automatically builds the front-end as well and installs the required Node.js version locally inside the `frontend` directory; Therefore, **Node.js (v24.20.0) is only required when running the front-end on its own**.
+This project consists of a Java Spring Boot back-end with a Vue.js front-end. The back-end **requires a Java JDK (v21 or higher)** to be accessible from the `quad-assignment-backend` directory. Building the back-end automatically builds the front-end as well and installs the required Node.js version locally inside the `quad-assignment-frontend` directory; Therefore, **Node.js (v24.20.0) is only required when running the front-end on its own**.
 
 
 
