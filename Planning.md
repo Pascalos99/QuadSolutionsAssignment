@@ -4,9 +4,9 @@
 
 * [x] Try to connect the most basic Spring Boot end-point to a Vue front-end
 
-* [ ] Make it possible to `build` this simple project from a single `git` repo
+* [x] Make it possible to `build` this simple project from a single `git` repo
   * [x] Test building the repo from scratch
-  * [ ] Test building the repo on a fresh computer
+  * [x] Test building the repo on a fresh computer
 
 * [ ] Plan further for:
 
