@@ -99,7 +99,7 @@
 					<phase>process-resources</phase>
 					<goals><goal>copy-resources</goal></goals>
 					<configuration>
-						<outputDirectory>src/main/resources/static</outputDirectory>
+						<outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
 						<resources>
 						<resource>
 							<directory>../quad-assignment-frontend/dist</directory>
