@@ -1,5 +1,12 @@
-{"properties": [{
-  "name": "quote.api.base-url",
-  "type": "java.lang.String",
-  "description": "The base url for the quote API"
-}]}
+{"properties": [
+  {
+    "name": "quote.api.base-url",
+    "type": "java.lang.String",
+    "description": "The base url for the quote API"
+  },
+  {
+    "name": "feature.quote.enabled",
+    "type": "java.lang.String",
+    "description": "Set to 'true' to enable the quote example feature"
+  }
+]}

@@ -100,7 +100,6 @@
 			<!--Maven resources plugin for moving resources-->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.5.0</version>
 				<executions>
 					<!--(4) Copy the front-end distribution to the back-end 'static' folder-->
 					<execution>
