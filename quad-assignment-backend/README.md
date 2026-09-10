@@ -2,6 +2,8 @@
 
 ## Getting Started
 
+To set-up this project, use the provided Maven Wrapper ([`mvnw`](mvnw) or [`mvnw.exe`](mvnw.exe)) to build, compile, run, test, and more. For an IDE setup, select "Import Project > Existing Maven Project" or similar (depending on your IDE) and install the appropriate [Spring Tools](https://spring.io/tools) plugin for your IDE.
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 
