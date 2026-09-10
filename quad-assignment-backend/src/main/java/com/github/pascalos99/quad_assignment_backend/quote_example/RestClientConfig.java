@@ -6,6 +6,7 @@ import org.springframework.web.client.RestClient;
 
 import org.springframework.beans.factory.annotation.Value;
 
+@IncludeIfEnabled
 @Configuration
 public class RestClientConfig {
 	
