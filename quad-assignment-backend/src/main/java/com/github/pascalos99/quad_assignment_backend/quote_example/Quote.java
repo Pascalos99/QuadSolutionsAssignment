@@ -1,4 +1,4 @@
-package com.github.pascalos99.quad_assignment_backend;
+package com.github.pascalos99.quad_assignment_backend.quote_example;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

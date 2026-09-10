@@ -1,4 +1,4 @@
-package com.github.pascalos99.quad_assignment_backend;
+package com.github.pascalos99.quad_assignment_backend.quote_example;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
