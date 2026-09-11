@@ -1,5 +1,10 @@
 {"properties": [
   {
+	"name": "trivia.api.base-url",
+	"type": "java.lang.String",
+	"description":"The base url for the OpenTDB API"
+  },
+  {
     "name": "quote.api.base-url",
     "type": "java.lang.String",
     "description": "The base url for the quote API"
