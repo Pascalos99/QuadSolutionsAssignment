@@ -19,5 +19,4 @@ public class RestClientConfig {
 		return builder.baseUrl(baseUrl).build();
 	}
 	
-	
 }
