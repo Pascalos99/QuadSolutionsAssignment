@@ -4,11 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
-import com.github.pascalos99.quad_assignment_backend.quote_example.IncludeIfEnabled;
-
 import org.springframework.beans.factory.annotation.Value;
 
-@IncludeIfEnabled
 @Configuration
 public class RestClientConfig {
 	
