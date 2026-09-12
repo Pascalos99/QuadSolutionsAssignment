@@ -1,0 +1,16 @@
+{
+	"trivia_categories": [
+	  {
+	    "id": 9,
+	    "name": "General Knowledge"
+	  },
+	  {
+	    "id": 13,
+	    "name": "Entertainment: Musicals & Theatres"
+	  },
+	  {
+	    "id": 32,
+	    "name": "Entertainment: Cartoon & Animations"
+	  }
+	]
+}
