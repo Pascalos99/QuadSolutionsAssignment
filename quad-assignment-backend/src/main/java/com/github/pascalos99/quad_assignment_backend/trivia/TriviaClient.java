@@ -16,8 +16,8 @@ public class TriviaClient {
 	
 	private final RestClient restClient;
 	
-	public TriviaClient(@Qualifier("triviaRestClient") RestClient restClient) {
-		this.restClient = restClient;
+	public TriviaClient(@Qualifier("triviaRestClient") RestClient.Builder restClientBuilder) {
+		this.restClient = restClientBuilder.build();
 	}
 	
 	public ApiResponse getQuestions(

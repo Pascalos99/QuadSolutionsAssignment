@@ -10,8 +10,8 @@ public class QuoteClient {
 	
 	private final RestClient restClient;
 	
-	public QuoteClient(@Qualifier("quoteRestClient") RestClient restClient) {
-		this.restClient = restClient;
+	public QuoteClient(@Qualifier("quoteRestClient") RestClient.Builder restClientBuilder) {
+		this.restClient = restClientBuilder.build();
 	}
 	
 	public Quote getRandomQuote() {

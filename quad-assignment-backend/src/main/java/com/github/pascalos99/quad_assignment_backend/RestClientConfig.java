@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Value;
 public class RestClientConfig {
 	
 	@Bean
-	RestClient triviaRestClient(RestClient.Builder builder, @Value("${trivia.api.base-url}") String baseUrl) {
-		return builder.baseUrl(baseUrl).build();
+	RestClient.Builder triviaRestClient(@Value("${trivia.api.base-url}") String baseUrl) {
+		return RestClient.builder().baseUrl(baseUrl);
 	}
 	
 	@Bean
-	RestClient quoteRestClient(RestClient.Builder builder, @Value("${quote.api.base-url}") String baseUrl) {
-		return builder.baseUrl(baseUrl).build();
+	RestClient.Builder quoteRestClient(@Value("${quote.api.base-url}") String baseUrl) {
+		return RestClient.builder().baseUrl(baseUrl);
 	}
 	
 }
