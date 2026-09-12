@@ -1,0 +1,27 @@
+{
+	"response_code": 0,
+	"results": [
+		{
+			"type": "boolean",
+			"difficulty": "easy",
+			"category": "Science &amp; Nature",
+			"question": "Psychology is the science of behavior and mind.",
+			"correct_answer": "True",
+			"incorrect_answers": [
+				"False"
+			]
+		},
+		{
+			"type": "multiple",
+			"difficulty": "hard",
+			"category": "Entertainment: Video Games",
+			"question": "How many people can you recruit in the game Suikoden in a single playthrough?",
+			"correct_answer": "107",
+			"incorrect_answers": [
+				"108",
+				"93",
+				"96"
+			]
+		}
+	]
+}
