@@ -55,7 +55,8 @@ public class TriviaClient {
 	public String getToken() {
 		TokenResponse resp = restClient.get()
 				.uri(uriBuilder -> uriBuilder
-						.path("/api_token.php?command=request")
+						.path("/api_token.php")
+						.queryParam("command", "request")
 						.build())
 				.retrieve()
 				.body(TokenResponse.class);
@@ -69,7 +70,8 @@ public class TriviaClient {
 		if (token == null) return false;
 		TokenResponse resp = restClient.get()
 				.uri(uriBuilder -> uriBuilder
-						.path("/api_token.php?command=reset")
+						.path("/api_token.php")
+						.queryParam("command", "reset")
 						.queryParam("token", token)
 						.build())
 				.retrieve()
