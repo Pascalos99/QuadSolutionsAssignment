@@ -22,7 +22,7 @@ public class TriviaClient {
 	
 	public ApiResponse getQuestions(
 			int amount,
-			@Nullable String category,
+			@Nullable Integer category,
 			@Nullable String difficulty,
 			@Nullable String type,
 			@Nullable String encode,
@@ -33,6 +33,7 @@ public class TriviaClient {
 				.uri(uriBuilder -> uriBuilder
 						.path("/api.php")
 						.queryParam("amount", amount)
+						.queryParamIfPresent("category", Optional.ofNullable(category))
 						.queryParamIfPresent("difficulty", Optional.ofNullable(difficulty))
 						.queryParamIfPresent("type", Optional.ofNullable(type))
 						.queryParamIfPresent("encode", Optional.ofNullable(encode))
