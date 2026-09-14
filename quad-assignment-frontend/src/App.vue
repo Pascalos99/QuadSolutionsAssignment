@@ -1,3 +1,21 @@
+<script setup>
+  import { ref, watch } from 'vue'
+
+  const todoId = ref(1);
+  const todoData = ref(null);
+
+  async function fetchData() {
+    todoData.value = null;
+    const res = await fetch(
+      `https://jsonplaceholder.typicode.com/todos/${todoId.value}`
+    );
+    todoData.value = await res.json();
+  }
+
+  fetchData();
+  watch(todoId, fetchData)
+</script>
+
 <template>
   <h1>You did it!</h1>
   <p>
@@ -5,8 +23,13 @@
     documentation
   </p>
   <p>
-    There is a test page at <a href="/biba/index.html">biba</a>
+    There is a test page at <a href="/biba/index.html" target="_blank">biba</a>
   </p>
+  <button @click="todoId++">Next</button>
+  <p v-if="!todoData">Loading...</p>
+  <p v-else>{{ todoData }}</p>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
