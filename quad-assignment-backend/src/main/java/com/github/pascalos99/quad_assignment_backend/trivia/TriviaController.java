@@ -1,7 +1,5 @@
 package com.github.pascalos99.quad_assignment_backend.trivia;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,15 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.ApiResponse;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.Question;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.QuestionAndAnswer;
+import com.github.pascalos99.quad_assignment_backend.utils.SynchronizedWaitingQueue;
 
 @RestController
 @RequestMapping("")
 public class TriviaController {
 	
 	private final TriviaClient triviaClient;
+	private final SynchronizedWaitingQueue queue;
 	
-	public TriviaController(TriviaClient triviaClient) {
+	public TriviaController(TriviaClient triviaClient, SynchronizedWaitingQueue queue) {
 		this.triviaClient = triviaClient;
+		this.queue = queue;
 	}
 	
 	@GetMapping("/questions")
@@ -29,29 +30,14 @@ public class TriviaController {
 		QuestionRequest.Builder qr = QuestionRequest.builder(10);
 		
 		/*
-		 * The following is the only implementation really needed to make the
-		 * rate-limit of the external API be handled properly.
-		 * I noticed that every get-mapping seems to run on its own thread:
-		 *    calling Thread.sleep on one get-mapping did not stall any
-		 *    of the other get-mappings. Additionally, the get mapping
-		 *    is set as a 'synchronized' method, such that only
-		 *    one thread enters it at any given time. So Thread.sleep makes all
-		 *    the requests wait, not just the current one. This is ideal behaviour
-		 *    for a rate-limited-queue.
-		 * Therefore, all we need to do here is to wait at least until 5 seconds
-		 * after the previous successful HTTP request to the OpenTDB API.
-		 * This is handled inside the TriviaClient code, from which we can just
-		 * retrieve the ApiTimeoutUntil getter and wait if the timeout is still active.
+		 * We wait until there is a spot available to access the API.
+		 * This is a *BLOCKING* operation.
+		 * As such, GET requests made to '/questions' will *STALL*
+		 *  until a spot is available in the external API.
+		 * This behaviour is not always desirable, but was in
+		 *  this case a conscious choice.
 		 */
-		Instant apiTimeoutUntil = triviaClient.getApiTimeoutUntil();
-		Instant rightNow = Instant.now();
-		if (apiTimeoutUntil.isAfter(rightNow)) {
-			try {
-				Thread.sleep(Duration.between(rightNow, apiTimeoutUntil));
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		queue.waitUntil(triviaClient.getApiTimeoutUntil());
 		
 		ApiResponse resp = triviaClient.getQuestions(qr);
 		List<Question> result = new ArrayList<>();
