@@ -1,14 +1,15 @@
 package com.github.pascalos99.quad_assignment_backend.trivia;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClient;
 
 import com.github.pascalos99.quad_assignment_backend.trivia.model.ApiResponse;
@@ -20,8 +21,25 @@ public class TriviaClient {
 	
 	private final RestClient restClient;
 	
-	public TriviaClient(@Qualifier("triviaRestClient") RestClient.Builder restClientBuilder) {
+	/**
+	 * The minimum instant until which the Trivia-DB API
+	 * will only return 'TooManyRequests' (429) errors 
+	 * (response-code = 5) whenever the
+	 * {@link #getQuestions(QuestionRequest)} method is called.
+	 */
+	private Instant apiTimeoutUntil;
+	private final Duration apiRateLimit;
+	
+	public TriviaClient(
+			@Qualifier("triviaRestClient") RestClient.Builder restClientBuilder,
+			@Value("${trivia.api.rate-limit}") Duration rateLimit) {
 		this.restClient = restClientBuilder.build();
+		this.apiRateLimit = rateLimit;
+		this.apiTimeoutUntil = Instant.now();
+	}
+	
+	public Instant getApiTimeoutUntil() {
+		return apiTimeoutUntil;
 	}
 
     public ApiResponse getQuestions(QuestionRequest.Builder questionRequestBuilder) {
@@ -57,7 +75,16 @@ public class TriviaClient {
                     hasTooManyRequests.set(true);
                 })
                 .body(ApiResponse.class);
-        if (hasTooManyRequests.get()) return new ApiResponse(5, List.of());
+        if (hasTooManyRequests.get())
+        	return new ApiResponse(5, List.of());
+        
+        if (response.response_code() == 0)
+        {
+        	// The response-code is 0 only on a successful retrieval from the API.
+        	// If the API was successfully retrieved from, then any request made within
+        	// `rate-limit` time will result in a "TooManyRequests" HTTP status code (429)
+        	apiTimeoutUntil = Instant.now().plus(apiRateLimit);
+        }
         return response;
 	}
 	

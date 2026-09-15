@@ -1,17 +1,22 @@
 {"properties": [
   {
-	"name": "trivia.api.base-url",
-	"type": "java.lang.String",
-	"description":"The base url for the OpenTDB API"
+    "name": "trivia.api.base-url",
+    "type": "java.lang.String",
+    "description": "The base url for the OpenTDB API."
   },
   {
     "name": "quote.api.base-url",
     "type": "java.lang.String",
-    "description": "The base url for the quote API"
+    "description": "The base url for the quote API."
   },
   {
     "name": "feature.quote.enabled",
     "type": "java.lang.String",
-    "description": "Set to 'true' to enable the quote example feature"
+    "description": "Set to 'true' to enable the quote example feature."
+  },
+  {
+    "name": "trivia.api.rate-limit",
+    "type": "java.lang.String",
+    "description": "The minimum required time between requests to the trivia API, written in ISO-8601 duration format."
   }
 ]}

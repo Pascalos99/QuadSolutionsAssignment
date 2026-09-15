@@ -5,7 +5,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withTooManyRequests;
 
-import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -39,7 +39,7 @@ public class TriviaClientTests {
 	void setUp() {
 		RestClient.Builder builder = RestClient.builder().baseUrl("http://localhost");
 		mockServer = MockRestServiceServer.bindTo(builder).build();
-		triviaClient = new TriviaClient(builder);
+		triviaClient = new TriviaClient(builder, Duration.ofSeconds(5));
 	}
 	
 	@ParameterizedTest(name = "{index}")
