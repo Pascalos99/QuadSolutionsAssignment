@@ -6,23 +6,21 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pascalos99.quad_assignment_backend.trivia.model.ApiResponse;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.Question;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.QuestionAndAnswer;
-import com.github.pascalos99.quad_assignment_backend.utils.SynchronizedWaitingQueue;
 
 @RestController
 @RequestMapping("")
 public class TriviaController {
 	
 	private final TriviaClient triviaClient;
-	private final SynchronizedWaitingQueue queue;
 	
-	public TriviaController(TriviaClient triviaClient, SynchronizedWaitingQueue queue) {
+	public TriviaController(TriviaClient triviaClient) {
 		this.triviaClient = triviaClient;
-		this.queue = queue;
 	}
 	
 	@GetMapping("/questions")
@@ -37,7 +35,7 @@ public class TriviaController {
 		 * This behaviour is not always desirable, but was in
 		 *  this case a conscious choice.
 		 */
-		queue.waitUntil(triviaClient.getApiTimeoutUntil());
+		triviaClient.waitForApiTimeoutEnd();
 		
 		ApiResponse resp = triviaClient.getQuestions(qr);
 		List<Question> result = new ArrayList<>();

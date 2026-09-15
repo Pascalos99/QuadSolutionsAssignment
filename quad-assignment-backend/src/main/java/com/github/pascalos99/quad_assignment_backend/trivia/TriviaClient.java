@@ -15,6 +15,7 @@ import org.springframework.web.client.RestClient;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.ApiResponse;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.Categories;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.TokenResponse;
+import com.github.pascalos99.quad_assignment_backend.utils.SynchronizedWaitingQueue;
 
 @Component
 public class TriviaClient {
@@ -29,17 +30,29 @@ public class TriviaClient {
 	 */
 	private Instant apiTimeoutUntil;
 	private final Duration apiRateLimit;
+	private final SynchronizedWaitingQueue queue;
 	
 	public TriviaClient(
 			@Qualifier("triviaRestClient") RestClient.Builder restClientBuilder,
 			@Value("${trivia.api.rate-limit}") Duration rateLimit) {
 		this.restClient = restClientBuilder.build();
 		this.apiRateLimit = rateLimit;
+		this.queue = new SynchronizedWaitingQueue();
 		this.apiTimeoutUntil = Instant.now();
 	}
 	
-	public Instant getApiTimeoutUntil() {
-		return apiTimeoutUntil;
+	/**
+	 * Calls {@link SynchronizedWaitingQueue#waitUntil(Instant)} to allow exactly 
+	 * one thread through at a time, synchronized with the rate-limit and last-access
+	 * time of the external API this TriviaClient connects to. As a result, calling
+	 * {@link #waitForApiTimeoutEnd()} before calling {@link #getQuestions(QuestionRequest)}
+	 * will cause the current thread to stall until a spot is available before requesting
+	 * anything to the external API. If no other source accesses the API through the same IP
+	 * address, then this provides a guarantee that {@link #getQuestions(QuestionRequest)}
+	 * will <b>not</b> produce an {@link ApiResponse} with a {@code response-code} of {@code 5}.
+	 */
+	public void waitForApiTimeoutEnd() {
+		queue.waitUntil(apiTimeoutUntil);
 	}
 
     public ApiResponse getQuestions(QuestionRequest.Builder questionRequestBuilder) {
