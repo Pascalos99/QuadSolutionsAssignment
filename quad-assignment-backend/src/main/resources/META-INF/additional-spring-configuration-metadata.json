@@ -11,12 +11,22 @@
   },
   {
     "name": "feature.quote.enabled",
-    "type": "java.lang.String",
+    "type": "java.lang.Boolean",
     "description": "Set to 'true' to enable the quote example feature."
   },
   {
     "name": "trivia.api.rate-limit",
-    "type": "java.lang.String",
+    "type": "java.time.Duration",
     "description": "The minimum required time between requests to the trivia API, written in ISO-8601 duration format."
+  },
+  {
+    "name": "trivia.feature.ttl",
+    "type": "java.time.Duration",
+    "description": "The maximum allowed time for a question-UUID & answer pair to stay in the cache, written in ISO-8601 duration format."
+  },
+  {
+    "name": "trivia.feature.cache-limit",
+    "type": "java.lang.Long",
+    "description": "The maximum allowed number of question-UUID & answer pairs to stay in the cache."
   }
 ]}

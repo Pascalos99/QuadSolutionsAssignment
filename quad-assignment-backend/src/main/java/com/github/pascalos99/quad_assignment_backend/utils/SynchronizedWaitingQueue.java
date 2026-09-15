@@ -3,8 +3,6 @@ package com.github.pascalos99.quad_assignment_backend.utils;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.springframework.stereotype.Component;
-
 /**
  * This is an extremely crude implementation of a waiting queue.
  * Rate-limiting with an actual package intended for it is much advised 
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Component;
  * tied to the {@link SynchronizedWaitingQueue} instance,
  * as described by the {@code synchronized} method call.
  */
-@Component
 public class SynchronizedWaitingQueue {
 	/**
 	 * Make the thread sleep until {@link Instant#now()} 
