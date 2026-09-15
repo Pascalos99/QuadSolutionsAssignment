@@ -7,7 +7,7 @@
   async function fetchData() {
     todoData.value = null;
     const res = await fetch(
-      `https://jsonplaceholder.typicode.com/todos/${todoId.value}`
+      `/questions`
     );
     todoData.value = await res.json();
   }
