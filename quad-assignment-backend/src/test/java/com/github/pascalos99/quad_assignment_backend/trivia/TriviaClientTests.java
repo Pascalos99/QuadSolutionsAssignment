@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.github.pascalos99.quad_assignment_backend.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,6 +20,7 @@ import org.springframework.web.client.RestClient;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.ApiResponse;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.Categories;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.Categories.Category;
+import com.github.pascalos99.quad_assignment_backend.utils.FileUtils;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.QuestionAndAnswer;
 
 public class TriviaClientTests {
@@ -29,7 +29,7 @@ public class TriviaClientTests {
 	private TriviaClient triviaClient;
 
 	private static final String EMPTY_RESPONSE =
-            TestUtils.getResourceContent("/fixtures/trivia/questions-empty.json");
+            FileUtils.getResourceContent("/fixtures/trivia/questions-empty.json");
 
 	record GetQuestionsUriCase(
 			int amount, Integer category, String difficulty,
@@ -52,7 +52,7 @@ public class TriviaClientTests {
 	
 	@Test
 	void getQuestions_deserializesSuccessResponse() {
-		String json = TestUtils.getResourceContent("/fixtures/trivia/questions-success.json");
+		String json = FileUtils.getResourceContent("/fixtures/trivia/questions-success.json");
 		mockServer.expect(requestTo("http://localhost/api.php?amount=2"))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 		ApiResponse response = triviaClient.getQuestions(QuestionRequest.builder(2));
@@ -68,7 +68,7 @@ public class TriviaClientTests {
 	
 	@Test
 	void getQuestions_deserializesFailureResponse() {
-		String json = TestUtils.getResourceContent("/fixtures/trivia/questions-failure.json");
+		String json = FileUtils.getResourceContent("/fixtures/trivia/questions-failure.json");
 		mockServer.expect(requestTo("http://localhost/api.php?amount=2"))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 		ApiResponse response = triviaClient.getQuestions(QuestionRequest.builder(2));
@@ -79,7 +79,7 @@ public class TriviaClientTests {
     @Test
     void getQuestions_handlesRateLimitWithBody() {
         // Test if getQuestions handles rate-limit with body json present:
-        String json1 = TestUtils.getResourceContent("/fixtures/trivia/questions-rate.json");
+        String json1 = FileUtils.getResourceContent("/fixtures/trivia/questions-rate.json");
         mockServer.expect(requestTo("http://localhost/api.php?amount=2"))
                 .andRespond(withTooManyRequests().body(json1).contentType(MediaType.APPLICATION_JSON));
         ApiResponse response1 = triviaClient.getQuestions(QuestionRequest.builder(2));
@@ -99,7 +99,7 @@ public class TriviaClientTests {
 	
 	@Test
 	void getCategories_generatesUriAndDeserializes() {
-		String json = TestUtils.getResourceContent("/fixtures/trivia/categories.json");
+		String json = FileUtils.getResourceContent("/fixtures/trivia/categories.json");
 		mockServer.expect(requestTo("http://localhost/api_category.php"))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 		Categories response = triviaClient.getCategories();
@@ -113,7 +113,7 @@ public class TriviaClientTests {
 	
 	@Test
 	void getToken_generatesUriAndDeserializesSuccess() {
-		String json = TestUtils.getResourceContent("/fixtures/trivia/token-request.json");
+		String json = FileUtils.getResourceContent("/fixtures/trivia/token-request.json");
 		mockServer.expect(requestTo("http://localhost/api_token.php?command=request"))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 		String token = triviaClient.getToken();
@@ -123,7 +123,7 @@ public class TriviaClientTests {
 	
 	@Test
 	void getToken_generatesUriAndDeserializesFailure() {
-		String json = TestUtils.getResourceContent("/fixtures/trivia/token-invalid.json");
+		String json = FileUtils.getResourceContent("/fixtures/trivia/token-invalid.json");
 		mockServer.expect(requestTo("http://localhost/api_token.php?command=request"))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 		String token = triviaClient.getToken();
@@ -133,7 +133,7 @@ public class TriviaClientTests {
 	
 	@Test
 	void resetToken_generatesUriAndDeserializesSuccess() {
-		String json = TestUtils.getResourceContent("/fixtures/trivia/token-reset.json");
+		String json = FileUtils.getResourceContent("/fixtures/trivia/token-reset.json");
 		mockServer.expect(requestTo("http://localhost/api_token.php?command=reset&token=t0k3n"))
 						.andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 		boolean isValid = triviaClient.resetToken("t0k3n");
@@ -143,7 +143,7 @@ public class TriviaClientTests {
 	
 	@Test
 	void resetToken_generatesUriAndDeserializesFailure() {
-		String json = TestUtils.getResourceContent("/fixtures/trivia/token-invalid.json");
+		String json = FileUtils.getResourceContent("/fixtures/trivia/token-invalid.json");
 		mockServer.expect(requestTo("http://localhost/api_token.php?command=reset&token=t0k3n"))
 						.andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
 		boolean isValid = triviaClient.resetToken("t0k3n");
