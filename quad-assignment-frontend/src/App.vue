@@ -1,19 +1,26 @@
+
 <script setup>
   import { ref, watch } from 'vue'
 
-  const todoId = ref(1);
-  const todoData = ref(null);
+  const qNumber = ref(0)
+  const questions = ref([])
 
-  async function fetchData() {
-    todoData.value = null;
+  async function fetchData(amount) {
+    questions.value = null;
     const res = await fetch(
-      `/questions?count=2`
+      `/questions?count=3`
     );
-    todoData.value = await res.json();
+    questions.value = await res.json()
   }
 
-  fetchData();
-  watch(todoId, fetchData)
+  // const requestOptions = {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ name: "Vue 3 POST Request Example" })
+  // };
+
+  watch(qNumber, fetchData)
+  qNumber.value = 1
 </script>
 
 <template>
@@ -25,9 +32,11 @@
   <p>
     There is a test page at <a href="/biba/index.html" target="_blank">biba</a>
   </p>
-  <button @click="todoId++">Next</button>
-  <p v-if="!todoData">Loading...</p>
-  <p v-else>{{ todoData }}</p>
+  <button @click="qNumber++">Next</button>
+  <p v-if="!questions">Loading...</p>
+  <ul v-else>
+    <li v-for="question in questions" :key="question.uuid">{{question.question}}</li>
+  </ul>
 </template>
 
 <style scoped>
