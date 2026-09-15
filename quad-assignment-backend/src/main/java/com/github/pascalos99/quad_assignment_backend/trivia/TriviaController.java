@@ -25,7 +25,7 @@ public class TriviaController {
 	}
 	
 	@GetMapping("/questions")
-	public List<Question> getQuestions() {
+	public synchronized List<Question> getQuestions() {
 		QuestionRequest.Builder qr = QuestionRequest.builder(10);
 		
 		/*
@@ -34,7 +34,7 @@ public class TriviaController {
 		 * I noticed that every get-mapping seems to run on its own thread:
 		 *    calling Thread.sleep on one get-mapping did not stall any
 		 *    of the other get-mappings. Additionally, the get mapping
-		 *    seems to function as a 'synchronized' method, such that only
+		 *    is set as a 'synchronized' method, such that only
 		 *    one thread enters it at any given time. So Thread.sleep makes all
 		 *    the requests wait, not just the current one. This is ideal behaviour
 		 *    for a rate-limited-queue.
