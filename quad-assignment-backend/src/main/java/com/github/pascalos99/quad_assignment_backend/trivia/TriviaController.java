@@ -26,8 +26,8 @@ public class TriviaController {
 	}
 	
 	@GetMapping("/questions")
-	public synchronized List<Question> getQuestions() {
-		QuestionRequest.Builder qr = QuestionRequest.builder(10);
+	public synchronized List<Question> getQuestions(@RequestParam(defaultValue = "10") int count) {
+		QuestionRequest.Builder qr = QuestionRequest.builder(count);
 		
 		/*
 		 * We wait until there is a spot available to access the API.

@@ -7,7 +7,7 @@
   async function fetchData() {
     todoData.value = null;
     const res = await fetch(
-      `/questions`
+      `/questions?count=2`
     );
     todoData.value = await res.json();
   }
