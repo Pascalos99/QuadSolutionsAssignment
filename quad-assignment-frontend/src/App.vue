@@ -43,10 +43,10 @@
   }
 
   async function answerbutton(question, answer) {
-    if (answer.state != 'active') return;
+    if (answer.state !== 'active') return;
     let checked = await check(question, answer.text)
     for (let alt_answer of question.answers) {
-      if (answer == alt_answer) {
+      if (answer === alt_answer) {
         if (checked) {
           alt_answer.state = 'right';
           numCorrect.value++;
