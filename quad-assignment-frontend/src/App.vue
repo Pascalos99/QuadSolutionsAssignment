@@ -1,10 +1,12 @@
 
 <script setup>
-  import { ref, watch } from 'vue'
-  import { decode } from 'he'
+  import { ref, onMounted } from 'vue'
+  import { decode}  from 'he'
+  import JSConfetti  from 'js-confetti'
 
-  const qNumber = ref(0)
-  const questions = ref([])
+  const questions = ref(null)
+
+  const do_gaps = ref(true)
 
   function colorstyle(color) {
     return `background-color: var(--${color});`
@@ -24,6 +26,21 @@
     );
     questions.value = await res.json()
 
+    // questions.value = questions.value.map((question, i) => 
+    //   ({
+    //     ...question,
+    //     isEven: Boolean(i % 2),
+    //     answers: question.answers.map((text, j) => ({
+    //       ...text,
+    //       styling: colorstyles[j],
+    //       active: true
+    //     }))
+    //   })
+    // );
+    questions.value = questions.value.map((question, i) => ({
+      ...question,
+      isEven: Boolean(i % 2)
+    }))
     for (let question of questions.value) {
       let res = []
       for (let i = 0; i < question.answers.length; i++) {
@@ -58,6 +75,7 @@
       if (answer == alt_answer) {
         if (checked) {
           alt_answer.styling = colorstyle("right");
+          showConfetti()
         }
         else {
           alt_answer.styling = colorstyle("wrong");
@@ -69,29 +87,35 @@
     }
   }
 
-  // const requestOptions = {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({ name: "Vue 3 POST Request Example" })
-  // };
+  async function loadMore() {
+    fetchData(10)
+  }
 
-  watch(qNumber, ()=>fetchData(10))
-  qNumber.value = 1
+  const confetti = new JSConfetti()
+
+  function showConfetti() {
+    confetti.addConfetti()
+  }
+
+  onMounted(loadMore)
 </script>
 
 <template>
-  <div class = "content"><button @click="qNumber++">More Questions</button></div>
+  <div class = "content">
+    <button @click="loadMore">More Questions</button>
+    <button @click="do_gaps ^= true">Switch Layout</button>
+  </div>
   <p v-if="!questions" class="content">Loading...</p>
   <div v-else class="content">
-    <div class="questions">
-      <div v-for="question in questions" :key="question.uuid" class="question">
-        <p>{{decode(question.question)}}</p>
+    <div class="questions" :class="do_gaps? 'gaps' : 'nogaps'">
+      <div v-for="question in questions" :key="question.uuid" class="question"
+          :class="{ gaps: do_gaps, nogaps: !do_gaps, even: question.isEven, uneven: !question.isEven}">
+        <div class="question-text">{{decode(question.question)}}</div>
         <div class="answers">
           <button v-for="answer in question.answers" class="answer" :style="answer.styling" @click="answerbutton(question, answer)">
-            {{ decode(answer.answer) }}
+            <b class="answer-text">{{ decode(answer.answer) }}</b>
           </button>
         </div>
-        <br>
       </div>
     </div>
   </div>
@@ -99,16 +123,28 @@
 
 <style>
 :root {
-  --bg-color: rgb(180, 203, 197);
-  --tx-color-a: white;
-  --tx-color-q: black;
-  --red: rgb(163, 14, 14);
-  --green: rgb(8, 191, 8);
-  --blue: rgb(0, 140, 205);
-  --yellow: rgb(255, 149, 0);
-  --gray: gray;
-  --right: green;
-  --wrong: red;
+  --body-color: #3d7f47;
+  --bg-color: #85a883;
+  --bg-color2: #6c906b;
+  --tx-color-a: #383838;
+  --tx-color-q: #000000;
+  --button-border: #619268;
+  --red: #63accb;
+  --green: #F6987E;
+  --blue: #F6C241;
+  --yellow: #EAF32F;
+  --gray: #b0b0b0;
+  --right: #72cb2a;
+  --wrong: #696969;
+}
+body {
+  background-color: var(--body-color);
+}
+
+button {
+  border-color: var(--button-border);
+  border-width: 1mm;
+  background-color: var(--button-border);
 }
 </style>
 
@@ -117,34 +153,54 @@
   display: flex;
   justify-content: center;
   padding-bottom: 2mm;
+  column-gap: 5mm;
 }
+
 .questions {
   width: clamp(5cm, 95%, 50em);
-  row-gap: 1cm;
 }
+.questions.gaps {
+  display: grid;
+  row-gap: 5mm;
+}
+
 .question {
-  padding: 4mm;
   background-color: var(--bg-color);
   color: var(--tx-color-q);
-  justify-content: center;
   text-align: center;
-  width: clamp(1fr, 50%, 600px);
-  font-size: 6mm;
+  padding-bottom: 5mm;
+  padding-top: 2.5mm;
+}
+.question.nogaps {
+  padding-bottom: 10mm;
+}
+.question.even {
+  background-color: var(--bg-color2);
+}
+
+.question-text {
+  padding-left: 5mm;
+  padding-right: 5mm;
+  padding-bottom: 2mm;
+  font-size: 5.5mm;
 }
 .answers {
   display: grid;
+  width: 75%;
+  justify-self: center;
   grid-template-columns: 1fr 1fr;
-  grid-auto-rows: max-content;
-  gap: 1mm;
+  gap: 2mm;
   justify-content: center;
 }
 .answer {
   text-align: center;
   align-content: center;
   color: var(--tx-color-a);
-  background-color: var(--blue);
-  border-radius: 6px;
-  padding-bottom: 0.4em;
-  padding-top: 0.4em;
+  border-radius: 3mm;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+}
+.answer-text {
+
 }
 </style>
