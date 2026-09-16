@@ -2,6 +2,7 @@ package com.github.pascalos99.quad_assignment_backend.trivia;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,7 +54,11 @@ public class TriviaController {
 			UUID uuid = questionsAndAnswers.put(qna.correct_answer());
 			List<String> answers = qna.incorrect_answers();
 			answers.add(qna.correct_answer());
-			Collections.shuffle(answers);
+			if (qna.type().contentEquals(TriviaClient.TYPE_BOOL)) {
+				Collections.sort(answers, Collections.reverseOrder());
+			} else {
+				Collections.shuffle(answers);
+			}
 			result.add(new Question(
 					uuid, qna.type(), qna.difficulty(),
 					qna.category(), qna.question(), answers));
