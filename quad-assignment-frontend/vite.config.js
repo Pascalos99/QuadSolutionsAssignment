@@ -20,6 +20,10 @@ export default defineConfig({
       '/questions': {
         target: 'http://localhost:8080',
         changeOrigin: true,
+      },
+      '/checkanswers': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
       }
     }
   }
