@@ -97,7 +97,7 @@
     <span class="counter">Score: {{ numCorrect }}</span>
   </div>
   <div class="main">
-    <p v-if="!questions" class="content">Loading...</p>
+    <p v-if="!questions" class="content loading">Loading...</p>
     <div v-else class="content">
       <div class="questions">
         <div v-for="(question, i) in filteredQuestions" :key="question.uuid" class="question"
@@ -126,6 +126,7 @@
   --tx-color-q: #000000;
   --button-border: #62986a;
   --counter-bg: #ffd270;
+  --counter-border: #d1aa57;
   --Q0: #63accb;
   --Q1: #F6987E;
   --Q2: #F6C241;
@@ -133,16 +134,23 @@
   --gray: #b0b0b0;
   --right: #72cb2a;
   --wrong: #696969;
+  --font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --fsize-small: 1em;
+  --fsize-large: 1.4em;
 }
 body {
   background-color: var(--body1-color);
   background: linear-gradient(0deg,var(--body2-color) 0%,var(--body1-color) 100%);
+  font-family: var(--font);
+  font-size: var(--fsize-small);
 }
 
 button {
   border-color: var(--button-border);
   border-width: 1mm;
   background-color: var(--button-border);
+  font-family: var(--font);
+  font-size: var(--fsize-small);
 }
 </style>
 
@@ -155,7 +163,7 @@ button {
   left: 0%;
   top: 0%;
   border-color: var(--button-border);
-  border-width: 1mm;
+  border-width: 1.5mm;
   border-left: 0;
   border-right: 0;
   border-top: 0;
@@ -169,24 +177,40 @@ button {
   margin-right: 0;
 }
 .counter {
-	background-color:var(--counter-bg);
-	padding:1.5mm;
+	background-color: var(--counter-bg);
+	padding: 1.5mm;
   padding-bottom: 0;
-  padding-top: 0.75mm;
+  padding-top: 0;
+  border-color: var(--counter-border);
+  border-width: 1mm;
+  border-style: outset;
 }
 .main {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-top: 3.5em;
 }
 .content {
   display: flex;
   justify-content: center;
   column-gap: 5mm;
-  margin-top: 15mm;
 }
 .tail {
   flex: 1;
+}
+
+.loading {
+  background-color: var(--bg-color);
+  color: var(--tx-color-q);
+  font-size: var(--fsize-large);
+  padding: 5mm;
+  width: fit-content;
+  align-self: center;
+  border-radius: 2mm;
+  border-style: solid;
+  border-color: var(--bg-color2);
+  border-width: 1mm;
 }
 
 .questions {
@@ -196,7 +220,6 @@ button {
   justify-content: center;
   overflow-wrap: break-word;
 }
-
 .question {
   display: grid;
   row-gap: 2mm;
@@ -215,8 +238,8 @@ button {
   padding-left: 5mm;
   padding-right: 5mm;
   padding-bottom: 1mm;
-  font-size: 5.5mm;
   overflow-wrap: break-word;
+  font-size: var(--fsize-large);
 }
 
 .answers {
