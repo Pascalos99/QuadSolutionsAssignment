@@ -140,6 +140,7 @@
         </div>
       </div>
     </div>
+    <p v-if="loading && questions" class="content loading">Loading...</p>
     <div class="tail"></div>
   </div>
 </template>
