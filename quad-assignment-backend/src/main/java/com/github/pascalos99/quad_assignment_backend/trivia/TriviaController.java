@@ -2,7 +2,6 @@ package com.github.pascalos99.quad_assignment_backend.trivia;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.github.pascalos99.quad_assignment_backend.trivia.model.Answer;
+import com.github.pascalos99.quad_assignment_backend.trivia.model.ApiInfo;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.ApiResponse;
+import com.github.pascalos99.quad_assignment_backend.trivia.model.Categories;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.Question;
 import com.github.pascalos99.quad_assignment_backend.trivia.model.QuestionAndAnswer;
+import com.github.pascalos99.quad_assignment_backend.trivia.model.QuestionsAndToken;
 import com.github.pascalos99.quad_assignment_backend.utils.AnswerCache;
 
 @RestController
@@ -34,9 +36,60 @@ public class TriviaController {
 		questionsAndAnswers = dataStore;
 	}
 	
+	@GetMapping("/help")
+	public ApiInfo getInfo() {
+		String msg =
+				"""
+				Usage for GET /questions:
+				
+				GET /questions[?amount=<INT>][&category=<INT>][&type=<STR>]\
+				[&difficulty=<STR>][&encode=<STR>][&token=<STR>]
+				
+				<> placeholder type (STR = string, INT = integer)
+				[] optional parameter
+				Parameters without brackets are required.
+				
+				When not included, the 'amount' defaults to 10.
+				
+				See 'categories', 'types', 'difficulties', and 'encodes' for \
+				a list of allowed values for the corresponding parameters.
+				For 'token', only tokens returned by previous API calls are valid.
+				""";
+		Categories categories = triviaClient.getCategories();
+		return new ApiInfo(
+				msg, 
+				categories.trivia_categories(),
+				TriviaClient.TYPES,
+				TriviaClient.DIFFICULTIES,
+				TriviaClient.ENCODINGS
+		);
+	}
+	
 	@GetMapping("/questions")
-	public List<Question> getQuestions(@RequestParam(defaultValue = "10") int count) {
+	public QuestionsAndToken getQuestions(
+			@RequestParam(defaultValue = "10") int count,
+			@RequestParam(required = false) Integer category,
+			@RequestParam(required = false) String type,
+			@RequestParam(required = false) String difficulty,
+			@RequestParam(required = false) String encode,
+			@RequestParam(required = false) String token
+		) {
+		if (count <= 0) throw new ResponseStatusException(
+				HttpStatus.BAD_REQUEST, "Invalid number of questions requested ("+count+")");
+		
+		String usingToken = token == null ? triviaClient.getToken() : token;
+		
 		QuestionRequest.Builder qr = QuestionRequest.builder(count);
+		// Note that excluded parameters are passed as 'null', which
+		//  simply excludes them from the final API call, thanks to
+		//  the TriviaClient class.
+		qr.setCategory(category);
+		qr.setType(type);
+		qr.setDifficulty(difficulty);
+		qr.setEncode(encode);
+		// if no valid token was generated, it will simply be 'null'
+		//  and thus be ignored and not break anything major.
+		qr.setToken(usingToken);
 		
 		/*
 		 * We wait until there is a spot available to access the API.
@@ -63,7 +116,7 @@ public class TriviaController {
 					uuid, qna.type(), qna.difficulty(),
 					qna.category(), qna.question(), answers));
 		}
-		return result;
+		return new QuestionsAndToken(usingToken, result);
 	}
 	
 	/**

@@ -32,7 +32,7 @@ public record QuestionRequest(
             this.amount = amount;
             return this;
         }
-        public Builder setCategory(int category) {
+        public Builder setCategory(Integer category) {
             this.category = category;
             return this;
         }

@@ -6,15 +6,21 @@
 
   const questions = ref(null)
 
+  const token = ref(null)
+
   const numQuestions = ref(0)
   const numCorrect = ref(0)
 
   async function fetchData(amount) {
     questions.value = null;
-    const res = await fetch(
-      `/questions?count=${amount}`
-    );
-    questions.value = await res.json()
+    let request = `/questions?count=${amount}`
+    if (token.value) {
+      request = `/questions?count=${amount}&token=${token.value}`
+    }
+    const res = await fetch(request);
+    let result = await res.json()
+    questions.value = result.questions;
+    token.value = result.token;
 
     questions.value = questions.value.map((question, i) => ({
       ...question,
