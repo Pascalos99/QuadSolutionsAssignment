@@ -5,34 +5,56 @@
   import JSConfetti  from 'js-confetti'
 
   const questions = ref(null)
-
+  const loading = ref(false)
   const token = ref(null)
 
   const numQuestions = ref(0)
   const numCorrect = ref(0)
+  const numWrong = ref(0)
+
+  const hideCompleted = ref(false)
+  const scoreShowNumCorrect = ref(true)
+
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+  const confetti = new JSConfetti()
+  const showConfetti = () => confetti.addConfetti()
+
+  function processQuestion(question) {
+    return {
+      ...question,
+      isDone: false,
+      number: ++numQuestions.value,
+      answers: question.answers.map((answer, i) => ({
+        text: answer,
+        state: 'active',
+        position: i
+      }))
+    }
+  }
 
   async function fetchData(amount) {
-    questions.value = null;
     let request = `/questions?count=${amount}`
     if (token.value) {
       request = `/questions?count=${amount}&token=${token.value}`
     }
     const res = await fetch(request);
-    let result = await res.json()
-    questions.value = result.questions;
-    token.value = result.token;
-
-    questions.value = questions.value.map(question => ({
-      ...question,
-      isDone: false,
-      number: ++numQuestions.value,
-      answers: question.answers.map((answer2, i) => ({
-        text: answer2,
-        state: 'active',
-        position: i
+    if (res.ok) {
+      let result = await res.json()
+      if (!questions.value) {
+        questions.value = [];
+      }
+      questions.value = questions.value.map((question) => ({
+        ...question
       }))
-    }))
+      questions.value = questions.value.concat(result.questions.map(processQuestion));
+      token.value = result.token;
+    } else {
+      await delay(500)
+      fetchData(amount)
+    }
   }
+
+  const answerCorrect = 1, answerIncorrect = 2, answerExpired = 3;
 
   async function check(question, answer) {
     const requestOptions = {
@@ -44,22 +66,26 @@
       })
     }
     const res = await fetch(`/checkanswers`, requestOptions);
-    if (!res.ok) return false;
-    return await res.json();
+    if (!res.ok) return answerExpired;
+    return (await res.json()) ? answerCorrect : answerIncorrect;
   }
 
-  async function answerbutton(question, answer) {
+  async function sendAnswer(question, answer) {
     if (answer.state !== 'active') return;
     let checked = await check(question, answer.text)
     for (let alt_answer of question.answers) {
       if (answer === alt_answer) {
-        if (checked) {
+        if (checked === answerCorrect) {
           alt_answer.state = 'right';
           numCorrect.value++;
           showConfetti();
         }
-        else {
+        else if (checked === answerIncorrect) {
           alt_answer.state = 'wrong'
+          numWrong.value++;
+        } else {
+          // question has expired, don't count it
+          alt_answer.state = 'inactive'
         }
       }
       else {
@@ -70,16 +96,11 @@
   }
 
   async function loadMore() {
-    fetchData(10)
+    if (loading.value) return;
+    loading.value = true;
+    await fetchData(10);
+    loading.value = false;
   }
-
-  const confetti = new JSConfetti()
-
-  function showConfetti() {
-    confetti.addConfetti()
-  }
-
-  const hideCompleted = ref(false)
 
   const filteredQuestions = computed(() => {
     return hideCompleted.value
@@ -92,19 +113,22 @@
 
 <template>
   <div class="topbar">
-    <button @click="loadMore">More Questions</button>
+    <button @click="loadMore" :disabled="loading">More Questions</button>
     <button @click="hideCompleted ^= true">{{ hideCompleted?"Show all":"Hide completed" }}</button>
-    <span class="counter">Score: {{ numCorrect }}</span>
+    <button @click="scoreShowNumCorrect ^= true" class="counter">
+      <div v-if="scoreShowNumCorrect">Score: {{ numCorrect }}</div>
+      <div v-else>Wrong: {{ numWrong }}</div>
+    </button>
   </div>
   <div class="main">
-    <p v-if="!questions" class="content loading">Loading...</p>
+    <p v-if="loading && !questions" class="content loading">Loading...</p>
     <div v-else class="content">
       <div class="questions">
         <div v-for="(question, i) in filteredQuestions" :key="question.uuid" class="question"
             :class="{ even: i % 2 === 1 }">
           <div class="question-text">{{decode(question.question)}}</div>
           <div class="answers">
-            <button v-for="answer in question.answers" class="answer" :class="answer.state, 'Q'+answer.position" @click="answerbutton(question, answer)">
+            <button v-for="answer in question.answers" class="answer" :class="answer.state, 'Q'+answer.position" @click="sendAnswer(question, answer)">
               <b class="answer-text">{{ decode(answer.text) }}</b>
             </button>
           </div>
@@ -178,15 +202,10 @@ button {
 }
 .counter {
 	background-color: var(--counter-bg);
-	padding: 1.5mm;
-  padding-bottom: 0;
-  padding-top: 0;
   border-color: var(--counter-border);
-  border-width: 1mm;
-  border-style: outset;
 }
 .main {
-  min-height: 100vh;
+  min-height: calc(100vh - 3.5em);
   display: flex;
   flex-direction: column;
   padding-top: 3.5em;
