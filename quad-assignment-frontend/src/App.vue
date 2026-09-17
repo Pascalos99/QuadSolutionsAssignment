@@ -48,9 +48,9 @@
       }))
       questions.value = questions.value.concat(result.questions.map(processQuestion));
       token.value = result.token;
+      return true;
     } else {
-      await delay(500)
-      fetchData(amount)
+      return false;
     }
   }
 
@@ -98,7 +98,11 @@
   async function loadMore() {
     if (loading.value) return;
     loading.value = true;
-    await fetchData(10);
+    while (!(await fetchData(10))) {
+      // This condition is mainly met whenever the server is down
+      // Regular requests consistently return a valid response
+      await delay(1000)
+    }
     loading.value = false;
   }
 
