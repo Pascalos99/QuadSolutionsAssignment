@@ -22,15 +22,14 @@
     questions.value = result.questions;
     token.value = result.token;
 
-    questions.value = questions.value.map((question, i) => ({
+    questions.value = questions.value.map(question => ({
       ...question,
-      isEven: Boolean(i % 2),
       isDone: false,
       number: ++numQuestions.value,
-      answers: question.answers.map((answer2, j) => ({
+      answers: question.answers.map((answer2, i) => ({
         text: answer2,
         state: 'active',
-        position: j
+        position: i
       }))
     }))
   }
@@ -101,8 +100,8 @@
     <p v-if="!questions" class="content">Loading...</p>
     <div v-else class="content">
       <div class="questions">
-        <div v-for="question in filteredQuestions" :key="question.uuid" class="question"
-            :class="{ even: question.isEven, uneven: !question.isEven}">
+        <div v-for="(question, i) in filteredQuestions" :key="question.uuid" class="question"
+            :class="{ even: i % 2 === 1 }">
           <div class="question-text">{{decode(question.question)}}</div>
           <div class="answers">
             <button v-for="answer in question.answers" class="answer" :class="answer.state, 'Q'+answer.position" @click="answerbutton(question, answer)">
