@@ -88,33 +88,38 @@
   <div class="topbar">
     <button @click="loadMore">More Questions</button>
     <button @click="hideCompleted ^= true">{{ hideCompleted?"Show all":"Hide completed" }}</button>
-    {{ numCorrect }}
+    <span class="counter">Score: {{ numCorrect }}</span>
   </div>
-  <p v-if="!questions" class="content">Loading...</p>
-  <div v-else class="content">
-    <div class="questions">
-      <div v-for="question in filteredQuestions" :key="question.uuid" class="question"
-          :class="{ even: question.isEven, uneven: !question.isEven}">
-        <div class="question-text">{{decode(question.question)}}</div>
-        <div class="answers">
-          <button v-for="answer in question.answers" class="answer" :class="answer.state, 'Q'+answer.position" @click="answerbutton(question, answer)">
-            <b class="answer-text">{{ decode(answer.text) }}</b>
-          </button>
+  <div class="main">
+    <p v-if="!questions" class="content">Loading...</p>
+    <div v-else class="content">
+      <div class="questions">
+        <div v-for="question in filteredQuestions" :key="question.uuid" class="question"
+            :class="{ even: question.isEven, uneven: !question.isEven}">
+          <div class="question-text">{{decode(question.question)}}</div>
+          <div class="answers">
+            <button v-for="answer in question.answers" class="answer" :class="answer.state, 'Q'+answer.position" @click="answerbutton(question, answer)">
+              <b class="answer-text">{{ decode(answer.text) }}</b>
+            </button>
+          </div>
+          <div>{{ question.number }}/{{ numQuestions }}</div>
         </div>
-        <div>{{ question.number }}/{{ numQuestions }}</div>
       </div>
     </div>
+    <div class="tail"></div>
   </div>
 </template>
 
 <style>
 :root {
-  --body-color: #3d7f47;
+  --body1-color: #3d7f47;
+  --body2-color: #f9c638;
   --bg-color: #85a883;
   --bg-color2: #6c906b;
   --tx-color-a: #383838;
   --tx-color-q: #000000;
   --button-border: #62986a;
+  --counter-bg: #ffd270;
   --Q0: #63accb;
   --Q1: #F6987E;
   --Q2: #F6C241;
@@ -124,7 +129,8 @@
   --wrong: #696969;
 }
 body {
-  background-color: var(--body-color);
+  background-color: var(--body1-color);
+  background: linear-gradient(0deg,var(--body2-color) 0%,var(--body1-color) 100%);
 }
 
 button {
@@ -139,7 +145,7 @@ button {
   display: flex;
   position: fixed;
   width: 100%;
-  background-color: var(--body-color);
+  background-color: var(--body1-color);
   left: 0%;
   top: 0%;
   border-color: var(--button-border);
@@ -156,11 +162,25 @@ button {
   margin-left: 0;
   margin-right: 0;
 }
+.counter {
+	background-color:var(--counter-bg);
+	padding:1.5mm;
+  padding-bottom: 0;
+  padding-top: 0.75mm;
+}
+.main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 .content {
   display: flex;
   justify-content: center;
   column-gap: 5mm;
   margin-top: 15mm;
+}
+.tail {
+  flex: 1;
 }
 
 .questions {
