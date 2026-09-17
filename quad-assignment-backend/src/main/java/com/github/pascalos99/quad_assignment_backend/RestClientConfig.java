@@ -14,9 +14,4 @@ public class RestClientConfig {
 		return RestClient.builder().baseUrl(baseUrl);
 	}
 	
-	@Bean
-	RestClient.Builder quoteRestClient(@Value("${quote.api.base-url}") String baseUrl) {
-		return RestClient.builder().baseUrl(baseUrl);
-	}
-	
 }
