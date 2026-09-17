@@ -45,6 +45,7 @@
       })
     }
     const res = await fetch(`/checkanswers`, requestOptions);
+    if (!res.ok) return false;
     return await res.json();
   }
 
